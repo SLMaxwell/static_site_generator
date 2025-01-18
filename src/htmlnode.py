@@ -11,7 +11,7 @@ class HTMLNode:
     self.props = props
 
   def to_html(self):
-    raise NotImplementedError
+    raise NotImplementedError("to_html() should be implemented by sub-classes.")
   
   def props_to_html(self):
     text = ""
