@@ -1,7 +1,7 @@
 import unittest
 from leafnode import LeafNode
 
-class TestHTMLNode(unittest.TestCase):
+class TestLeafNode(unittest.TestCase):
   def test_eq(self):
     l1 = LeafNode("p", "This is a paragraph of text.")
     l2 = LeafNode("a", "Click me!", {"href": "https://www.google.com"})
