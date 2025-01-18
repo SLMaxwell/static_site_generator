@@ -17,7 +17,18 @@ def main():
   print(node1)
   print(node4)
 
+  l1 = LeafNode("p", "This is a paragraph of text.")
+  l2 = LeafNode("a", "Click me!", {"href": "https://www.google.com"})
+  l3 = LeafNode(None, "Plain Text")
 
+  print()
+  print(l1)
+  print(l2)
+  print(l3)
+
+  print(l1.to_html())
+  print(l2.to_html())
+  print(l3.to_html())
 
 if __name__ == "__main__":
   main()
