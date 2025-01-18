@@ -1,6 +1,7 @@
 from textnode import *
 from htmlnode import *
 from leafnode import *
+from parentnode import *
 
 def main():
   node = TextNode("This is a text node", TextType.BOLD, "https://www.boot.dev")
@@ -29,6 +30,39 @@ def main():
   print(l1.to_html())
   print(l2.to_html())
   print(l3.to_html())
+
+  p0 = ParentNode(
+          "div",
+          [
+            LeafNode("b", "Bold text"),
+            LeafNode(None, "Normal text"),
+          ]
+        )
+  p1 = ParentNode(
+          "p",
+          [
+            LeafNode("b", "Bold text"),
+            LeafNode(None, "Normal text"),
+            LeafNode("i", "italic text"),
+            LeafNode(None, "Normal text"),
+          ],
+        )
+  p2 = ParentNode(
+          "p",
+          [
+            p0,
+            LeafNode("a", "Google", {"href": "https://www.google.com"}),
+          ],
+        )
+  print()
+  print(p0)
+  print(p0.to_html())
+  print()
+  print(p1)
+  print(p1.to_html())
+  print()
+  print(p2)
+  print(p2.to_html())
 
 if __name__ == "__main__":
   main()
