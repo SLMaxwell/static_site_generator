@@ -7,9 +7,9 @@ class TestTextNode(unittest.TestCase):
     node2 = TextNode("This is a text node", TextType.BOLD)
     node3 = TextNode("This is a simple node", TextType.BOLD)
     node4 = TextNode("This is a text node", TextType.ITALIC)
-    node5 = TextNode("Link to Google", TextType.LINKS, "https://www.google.com/")
-    node6 = TextNode("Link to Google", TextType.LINKS, "https://www.google.com/")
-    node7 = TextNode("Link to Google", TextType.LINKS, "https://www.boot.dev/")
+    node5 = TextNode("Link to Google", TextType.LINK, "https://www.google.com/")
+    node6 = TextNode("Link to Google", TextType.LINK, "https://www.google.com/")
+    node7 = TextNode("Link to Google", TextType.LINK, "https://www.boot.dev/")
 
     text  = f"{node}"
     text2 = f"{node2}"
