@@ -84,6 +84,51 @@ class TestMain(unittest.TestCase):
     # print(str(error.exception))
     self.assertEqual(str(error.exception), "Unmatched delimiters in node: I`m a bad boy!")
 
+  def test_extractions(self):
+    text = "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) "
+    text += "and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)"
+    ai = "["
+    ai += "('rick roll', 'https://i.imgur.com/aKaOqIh.gif'), "
+    ai += "('obi wan', 'https://i.imgur.com/fJRm4Vk.jpeg')"
+    ai += "]"
+
+    images = extract_markdown_images(text)
+    self.assertEqual(str(images), ai)
+
+    text = "This is text with a link [to boot dev](https://www.boot.dev) "
+    text += "and [to youtube](https://www.youtube.com/@bootdotdev)"
+    al = "["
+    al += "('to boot dev', 'https://www.boot.dev'), "
+    al += "('to youtube', 'https://www.youtube.com/@bootdotdev')"
+    al += "]"
+
+    links = extract_markdown_links(text)
+    self.assertEqual(str(links), al)
+
+    text = "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) "
+    text += "and This is text with a link [to boot dev](https://www.boot.dev) "
+    text += "yet another image ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg) "
+    text += "and another link [to youtube](https://www.youtube.com/@bootdotdev)"
+
+    ab = "["
+    ab += "('rick roll', 'https://i.imgur.com/aKaOqIh.gif'), "
+    ab += "('obi wan', 'https://i.imgur.com/fJRm4Vk.jpeg'), "
+    ab += "('to boot dev', 'https://www.boot.dev'), "
+    ab += "('to youtube', 'https://www.youtube.com/@bootdotdev')"
+    ab += "]"
+
+    check = extract_markdown_images(text)
+    check.extend(extract_markdown_links(text))
+    self.assertEqual(str(check), ab)
+
+    nothing = extract_markdown_images("No images")
+    self.assertEqual(str(nothing), "[]")
+    nothing = extract_markdown_links("No Links")
+    self.assertEqual(str(nothing), "[]")
+    nothing = extract_markdown_images("")
+    self.assertEqual(str(nothing), "[]")
+    nothing = extract_markdown_links("")
+    self.assertEqual(str(nothing), "[]")
 
 if __name__ == "__main__":
   unittest.main()

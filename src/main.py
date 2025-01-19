@@ -2,6 +2,7 @@ from textnode import *
 from htmlnode import *
 from leafnode import *
 from parentnode import *
+import re
 
 def text_node_to_html_node(text_node):
   match text_node.text_type:
@@ -39,29 +40,37 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
     
   return new_nodes
 
+def extract_markdown_images(text):
+  return re.findall(r"!\[(.*?)\]\((.*?)\)", text)
 
+def extract_markdown_links(text):
+  return re.findall(r"[^!]\[(.*?)\]\((.*?)\)", text)
 
-
-def main():
+def sample_text_node():
   node = TextNode("This is a text node", TextType.BOLD, "https://www.boot.dev")
   
   print()
+  print("Text Node Sample:")
   print(node)
 
+def sample_html_node():
   node1 = HTMLNode(tag="p", value="Hi There", props= {"href": "https://www.google.com", "target": "_blank",})
   node2 = HTMLNode(tag="p", value="Im P2")
   node3 = HTMLNode(tag='span', value="I'm a span with blue text", props={"class": "blue_text"}, children=[node1, node2])
   node4 = HTMLNode(tag='div', props={"class": "center normal flex_grid"}, children=[node3])
 
   print()
+  print("HTML Node Tests:")
   print(node1)
   print(node4)
 
+def sample_leaf_node():
   l1 = LeafNode("p", "This is a paragraph of text.")
   l2 = LeafNode("a", "Click me!", {"href": "https://www.google.com"})
   l3 = LeafNode(None, "Plain Text")
 
   print()
+  print("Leaf Node Tests:")
   print(l1)
   print(l2)
   print(l3)
@@ -70,6 +79,7 @@ def main():
   print(l2.to_html())
   print(l3.to_html())
 
+def sample_parent_node():
   p0 = ParentNode(
           "div",
           [
@@ -94,6 +104,7 @@ def main():
           ],
         )
   print()
+  print("Parent Node Tests:")
   print(p0)
   print(p0.to_html())
   print()
@@ -103,15 +114,42 @@ def main():
   print(p2)
   print(p2.to_html())
 
-
+def sample_text_node_split():
   node = TextNode("This is text with a `code block` word", TextType.TEXT)
   new_nodes = split_nodes_delimiter([node], "`", TextType.CODE)
+  print()
+  print("Text Node Split:")
   print(new_nodes)
-#   [
-#     TextNode("This is text with a ", TextType.TEXT),
-#     TextNode("code block", TextType.CODE),
-#     TextNode(" word", TextType.TEXT),
-# ]
+    #   [
+    #    TextNode("This is text with a ", TextType.TEXT),
+    #    TextNode("code block", TextType.CODE),
+    #    TextNode(" word", TextType.TEXT),
+    #   ]
+
+def sample_image_extraction():
+  text = "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)"
+  print()
+  print("Image Markdown Extraction:")
+  print(extract_markdown_images(text))
+  # [("rick roll", "https://i.imgur.com/aKaOqIh.gif"), ("obi wan", "https://i.imgur.com/fJRm4Vk.jpeg")]
+
+def sample_links_extraction():
+  text = "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)"
+  print()
+  print("Links Markdown Extraction:")
+  print(extract_markdown_links(text))
+  # [("to boot dev", "https://www.boot.dev"), ("to youtube", "https://www.youtube.com/@bootdotdev")]
+
+def main():
+  
+  sample_text_node()
+  sample_html_node()
+  sample_leaf_node()
+  sample_parent_node()
+  sample_text_node_split()
+  sample_image_extraction()
+  sample_links_extraction()
+
 
 if __name__ == "__main__":
   main()
