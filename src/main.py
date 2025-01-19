@@ -20,6 +20,27 @@ def text_node_to_html_node(text_node):
     case _:
         raise Exception(f"Unknown TextType encountered: {text_node.text_type}")
 
+def split_nodes_delimiter(old_nodes, delimiter, text_type):
+  new_nodes = []
+  for node in old_nodes:
+    nodes = []
+    outer_type = node.text_type
+    if outer_type != TextType.TEXT:
+      nodes.append(node)
+    else:
+      splits = node.text.split(delimiter)
+      if len(splits) % 2 == 0:
+        raise Exception(f"Unmatched delimiters in node: {node.text[:20]}")
+      for i, txt in enumerate(splits):
+        type = outer_type if i % 2 == 0 else text_type
+        nodes.append(TextNode(txt, type))
+    
+    new_nodes.extend(nodes)
+    
+  return new_nodes
+
+
+
 
 def main():
   node = TextNode("This is a text node", TextType.BOLD, "https://www.boot.dev")
@@ -81,6 +102,16 @@ def main():
   print()
   print(p2)
   print(p2.to_html())
+
+
+  node = TextNode("This is text with a `code block` word", TextType.TEXT)
+  new_nodes = split_nodes_delimiter([node], "`", TextType.CODE)
+  print(new_nodes)
+#   [
+#     TextNode("This is text with a ", TextType.TEXT),
+#     TextNode("code block", TextType.CODE),
+#     TextNode(" word", TextType.TEXT),
+# ]
 
 if __name__ == "__main__":
   main()
