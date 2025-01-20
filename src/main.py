@@ -40,6 +40,50 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
     
   return new_nodes
 
+def split_nodes_image(old_nodes):
+  new_nodes = []
+  for node in old_nodes:
+    nodes = []
+    outer_type = node.text_type
+    if outer_type != TextType.TEXT:
+      nodes.append(node)
+    else:
+      images = extract_markdown_images(node.text)
+      names = [i[0] for i in images]
+      urls = [i[1] for i in images]
+      splits = re.split(r"!\[(.*?)\]\((.*?)\)", node.text)
+      for i, txt in enumerate(splits):
+        if txt in names:
+          nodes.append(TextNode(txt, TextType.IMAGE, urls[names.index(txt)]))
+        elif len(txt) > 0 and txt not in urls:
+          nodes.append(TextNode(txt, TextType.TEXT))
+    
+    new_nodes.extend(nodes)
+    
+  return new_nodes
+
+def split_nodes_link(old_nodes):
+  new_nodes = []
+  for node in old_nodes:
+    nodes = []
+    outer_type = node.text_type
+    if outer_type != TextType.TEXT:
+      nodes.append(node)
+    else:
+      links = extract_markdown_links(node.text)
+      names = [i[0] for i in links]
+      urls = [i[1] for i in links]
+      splits = re.split(r"[^!]\[(.*?)\]\((.*?)\)", node.text)
+      for i, txt in enumerate(splits):
+        if txt in names:
+          nodes.append(TextNode(txt, TextType.LINK, urls[names.index(txt)]))
+        elif len(txt) > 0 and txt not in urls:
+          nodes.append(TextNode(txt, TextType.TEXT))
+    
+    new_nodes.extend(nodes)
+    
+  return new_nodes
+
 def extract_markdown_images(text):
   return re.findall(r"!\[(.*?)\]\((.*?)\)", text)
 
@@ -140,6 +184,44 @@ def sample_links_extraction():
   print(extract_markdown_links(text))
   # [("to boot dev", "https://www.boot.dev"), ("to youtube", "https://www.youtube.com/@bootdotdev")]
 
+def sample_image_text_node():
+  text = "This is text with an image ![rick roll](https://i.imgur.com/aKaOqIh.gif) "
+  text += "and This is text with a link [to boot dev](https://www.boot.dev) "
+  text += "yet another image ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg) "
+  text += "and another link [to youtube](https://www.youtube.com/@bootdotdev)"
+
+  node = TextNode(text, TextType.TEXT)
+  sample = split_nodes_image([node])
+  sample = split_nodes_link(sample)
+
+  print()
+  print("Split Node Image and Link:")
+  print(str(sample))
+  # [
+  #  TextNode(This is text with an image , TEXT, None),
+  #  TextNode(rick roll, IMAGE, https://i.imgur.com/aKaOqIh.gif),
+  #  TextNode( and This is text with a link, TEXT, None),
+  #  TextNode(to boot dev, LINK, https://www.boot.dev),
+  #  TextNode( yet another image , TEXT, None),
+  #  TextNode(obi wan, IMAGE, https://i.imgur.com/fJRm4Vk.jpeg),
+  #  TextNode( and another link, TEXT, None),
+  #  TextNode(to youtube, LINK, https://www.youtube.com/@bootdotdev)
+  #]
+
+
+
+  #[
+  # TextNode(This is text with an image ![rick roll, LINK, https://i.imgur.com/aKaOqIh.gif) and This is text with a link), TextNode(to boot dev, LINK, https://www.boot.dev), TextNode( yet another image ![obi wan, LINK, https://i.imgur.com/fJRm4Vk.jpeg) and another link), TextNode(to youtube, LINK, https://www.youtube.com/@bootdotdev), TextNode(, TEXT, None)]
+
+  # [
+  #     TextNode("This is text with a link ", TextType.TEXT),
+  #     TextNode("to boot dev", TextType.LINK, "https://www.boot.dev"),
+  #     TextNode(" and ", TextType.TEXT),
+  #     TextNode(
+  #         "to youtube", TextType.LINK, "https://www.youtube.com/@bootdotdev"
+  #     ),
+  # ]
+
 def main():
   
   sample_text_node()
@@ -149,6 +231,7 @@ def main():
   sample_text_node_split()
   sample_image_extraction()
   sample_links_extraction()
+  sample_image_text_node()
 
 
 if __name__ == "__main__":

@@ -130,5 +130,45 @@ class TestMain(unittest.TestCase):
     nothing = extract_markdown_links("")
     self.assertEqual(str(nothing), "[]")
 
+  def test_image_link_split(self):
+    text = "This is text with an image ![rick roll](https://i.imgur.com/aKaOqIh.gif) "
+    text += "and This is text with a link [to boot dev](https://www.boot.dev) "
+    text += "yet another image ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg) "
+    text += "and another link [to youtube](https://www.youtube.com/@bootdotdev)"
+
+    a = '['
+    a += 'TextNode(This is text with an image , TEXT, None), '
+    a += 'TextNode(rick roll, IMAGE, https://i.imgur.com/aKaOqIh.gif), '
+    a += 'TextNode( and This is text with a link, TEXT, None), '
+    a += 'TextNode(to boot dev, LINK, https://www.boot.dev), '
+    a += 'TextNode( yet another image , TEXT, None), '
+    a += 'TextNode(obi wan, IMAGE, https://i.imgur.com/fJRm4Vk.jpeg), '
+    a += 'TextNode( and another link, TEXT, None), '
+    a += 'TextNode(to youtube, LINK, https://www.youtube.com/@bootdotdev)'
+    a += ']'
+
+    node = TextNode(text, TextType.TEXT)
+    sample = split_nodes_image([node])
+    sample = split_nodes_link(sample)
+
+    self.assertEqual(str(sample), a)
+
+    node = TextNode("Hi there", TextType.TEXT)
+    sample = split_nodes_image([node])
+    sample = split_nodes_link(sample)
+
+    self.assertEqual(str(sample), "[TextNode(Hi there, TEXT, None)]")
+
+    node = TextNode("", TextType.TEXT)
+    sample = split_nodes_image([node])
+    sample = split_nodes_link(sample)
+
+    self.assertEqual(str(sample), "[]")
+
+    sample = split_nodes_image([])
+    sample = split_nodes_link(sample)
+
+    self.assertEqual(str(sample), "[]")
+
 if __name__ == "__main__":
   unittest.main()
