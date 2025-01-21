@@ -208,5 +208,32 @@ class TestMain(unittest.TestCase):
       new_nodes = text_to_textnodes("Bad `code.")
     self.assertEqual(str(error.exception), "Unmatched delimiters in node: Bad `code.")
 
+  def test_block_split(self):
+    text = "# This is a heading \n"
+    text += "\n"
+    text += "\n"
+    text += "   This is a paragraph of text. It has some **bold** and *italic* words inside of it.\n"
+    text += "\n"
+    text += "\n"
+    text += "\n"
+    text += "     * This is the first list item in a list block    \n"
+    text += "    * This is a list item   \n"
+    text += "* This is another list item"
+
+    a0 = "# This is a heading"
+    a1 = "This is a paragraph of text. It has some **bold** and *italic* words inside of it."
+    a2  = "* This is the first list item in a list block\n"
+    a2 += "* This is a list item\n"
+    a2 += "* This is another list item"
+
+    blocks = markdown_to_blocks(text)
+
+    self.assertEqual(blocks[0], a0)
+    self.assertEqual(blocks[1], a1)
+    self.assertEqual(blocks[2], a2)
+
+    blocks = markdown_to_blocks(" \n \n\n \n \n\n\n     \n\n     \n     ")
+    self.assertEqual(blocks, [])
+
 if __name__ == "__main__":
   unittest.main()

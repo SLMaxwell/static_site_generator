@@ -4,6 +4,14 @@ from leafnode import *
 from parentnode import *
 import re
 
+def markdown_to_blocks(markdown):
+  blocks = []
+  for block in markdown.split("\n\n"):
+    cleaned = "\n".join([b.strip() for b in block.strip().splitlines()]).strip()
+    if len(cleaned) > 1:
+      blocks.append(cleaned)
+  return blocks
+
 def text_to_textnodes(text):
   new_nodes = []
   node = TextNode(text, TextType.TEXT)
@@ -243,6 +251,26 @@ def sample_full_text_split():
   print()
   print("Full Text Split:")
   print(new_nodes)
+
+def sample_block_split():
+  text = "# This is a heading \n"
+  text += "\n"
+  text += "\n"
+  text += "   This is a paragraph of text. It has some **bold** and *italic* words inside of it.\n"
+  text += "\n"
+  text += "\n"
+  text += "\n"
+  text += "     * This is the first list item in a list block    \n"
+  text += "    * This is a list item   \n"
+  text += "* This is another list item"
+  blocks = markdown_to_blocks(text)
+
+  print()
+  print("Splits Blocks:")
+  for i, block in enumerate(blocks):
+    print(f"Block {i}:")
+    print(block)
+    print()
 
 def main():
   
