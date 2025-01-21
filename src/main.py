@@ -4,6 +4,18 @@ from leafnode import *
 from parentnode import *
 import re
 
+def text_to_textnodes(text):
+  new_nodes = []
+  node = TextNode(text, TextType.TEXT)
+
+  new_nodes = split_nodes_delimiter([node], "**", TextType.BOLD)
+  new_nodes = split_nodes_delimiter(new_nodes, "*", TextType.ITALIC)
+  new_nodes = split_nodes_delimiter(new_nodes, "`", TextType.CODE)
+  new_nodes = split_nodes_image(new_nodes)
+  new_nodes = split_nodes_link(new_nodes)
+
+  return new_nodes
+
 def text_node_to_html_node(text_node):
   match text_node.text_type:
     case TextType.TEXT:
@@ -222,6 +234,16 @@ def sample_image_text_node():
   #     ),
   # ]
 
+def sample_full_text_split():
+  text = 'This is **text** with an *italic* word and a `code block` '
+  text += 'and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)'
+
+  new_nodes = text_to_textnodes(text)
+  
+  print()
+  print("Full Text Split:")
+  print(new_nodes)
+
 def main():
   
   sample_text_node()
@@ -232,6 +254,8 @@ def main():
   sample_image_extraction()
   sample_links_extraction()
   sample_image_text_node()
+  sample_full_text_split()
+  sample_block_split()
 
 
 if __name__ == "__main__":

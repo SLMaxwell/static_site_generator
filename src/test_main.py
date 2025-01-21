@@ -170,5 +170,43 @@ class TestMain(unittest.TestCase):
 
     self.assertEqual(str(sample), "[]")
 
+  def test_full_text_split(self):
+    text = 'This is **text** with an *italic* word and a `code block` '
+    text += 'and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)'
+
+    a = '['
+    a += 'TextNode(This is , TEXT, None), '
+    a += 'TextNode(text, BOLD, None), '
+    a += 'TextNode( with an , TEXT, None), '
+    a += 'TextNode(italic, ITALIC, None), '
+    a += 'TextNode( word and a , TEXT, None), '
+    a += 'TextNode(code block, CODE, None), '
+    a += 'TextNode( and an , TEXT, None), '
+    a += 'TextNode(obi wan image, IMAGE, https://i.imgur.com/fJRm4Vk.jpeg), '
+    a += 'TextNode( and a, TEXT, None), '
+    a += 'TextNode(link, LINK, https://boot.dev)'
+    a += ']'
+
+    new_nodes = text_to_textnodes(text)
+    self.assertEqual(str(new_nodes), a)
+
+    new_nodes = text_to_textnodes("Some simple **bold** text.")
+    a  = '['
+    a += 'TextNode(Some simple , TEXT, None), '
+    a += 'TextNode(bold, BOLD, None), '
+    a += 'TextNode( text., TEXT, None)'
+    a += ']'
+    self.assertEqual(str(new_nodes), a)
+
+    new_nodes = text_to_textnodes("Hi There")
+    self.assertEqual(str(new_nodes), "[TextNode(Hi There, TEXT, None)]")
+
+    new_nodes = text_to_textnodes("")
+    self.assertEqual(str(new_nodes), "[]")
+
+    with self.assertRaises(Exception) as error:
+      new_nodes = text_to_textnodes("Bad `code.")
+    self.assertEqual(str(error.exception), "Unmatched delimiters in node: Bad `code.")
+
 if __name__ == "__main__":
   unittest.main()
