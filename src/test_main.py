@@ -235,5 +235,72 @@ class TestMain(unittest.TestCase):
     blocks = markdown_to_blocks(" \n \n\n \n \n\n\n     \n\n     \n     ")
     self.assertEqual(blocks, [])
 
+  def test_block_type(self):
+    
+    bt = block_to_block_type("# Header")
+    self.assertEqual(bt, "h1")
+    bt = block_to_block_type("## Header")
+    self.assertEqual(bt, "h2")
+    bt = block_to_block_type("### Header")
+    self.assertEqual(bt, "h3")
+    bt = block_to_block_type("#### Header")
+    self.assertEqual(bt, "h4")
+    bt = block_to_block_type("##### Header")
+    self.assertEqual(bt, "h5")
+    bt = block_to_block_type("###### Header")
+    self.assertEqual(bt, "h6")
+
+    bt = block_to_block_type("```Fake Code")
+    self.assertNotEqual(bt, "code")
+    self.assertEqual(bt, "p")
+    bt = block_to_block_type("Fake Code```")
+    self.assertNotEqual(bt, "code")
+    self.assertEqual(bt, "p")
+    bt = block_to_block_type("```Actual Code```")
+    self.assertEqual(bt, "code")
+    self.assertNotEqual(bt, "p")
+
+    t  = "> Fake quote\n"
+    t += "Fake quote\n"
+    t += "> Fake quote"
+    bt = block_to_block_type(t)
+    self.assertNotEqual(bt, "quote")
+    self.assertEqual(bt, "p")
+
+    t  = "> real quote\n"
+    t += "> real quote\n"
+    t += "> real quote"
+    bt = block_to_block_type(t)
+    self.assertEqual(bt, "quote")
+    self.assertNotEqual(bt, "p")
+
+    t  = "* Fake ul\n"
+    t += "- Fake ul\n"
+    t += " Fake ul"
+    bt = block_to_block_type(t)
+    self.assertNotEqual(bt, "ul")
+    self.assertEqual(bt, "p")
+
+    t  = "* real quote\n"
+    t += "- real quote\n"
+    t += "* real quote"
+    bt = block_to_block_type(t)
+    self.assertEqual(bt, "ul")
+    self.assertNotEqual(bt, "p")
+
+    t  = "1. Fake ol\n"
+    t += "7 Fake ol\n"
+    t += " Fake 0l"
+    bt = block_to_block_type(t)
+    self.assertNotEqual(bt, "ol")
+    self.assertEqual(bt, "p")
+
+    t  = "1. real ol\n"
+    t += "2. real ol\n"
+    t += "3. real ol"
+    bt = block_to_block_type(t)
+    self.assertEqual(bt, "ol")
+    self.assertNotEqual(bt, "p")
+
 if __name__ == "__main__":
   unittest.main()

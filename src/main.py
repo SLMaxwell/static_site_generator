@@ -4,6 +4,41 @@ from leafnode import *
 from parentnode import *
 import re
 
+def block_to_block_type(block_text):
+  if block_text[:7] == "###### ":
+    return "h6"
+  if block_text[:6] == "##### ":
+    return "h5"
+  if block_text[:5] == "#### ":
+    return "h4"
+  if block_text[:4] == "### ":
+    return "h3"
+  if block_text[:3] == "## ":
+    return "h2"
+  if block_text[:2] == "# ":
+    return "h1"
+  if block_text[:3] == "```" and block_text[-3:] == "```":
+    return "code"
+  
+  quote = (block_text[:1] == ">")
+  ul = (block_text[:2] in ['* ','- '])
+  ol = block_text[:1].isnumeric()
+
+  for i, line in enumerate(block_text.splitlines()):
+    # print(line)
+    # print(f"{quote}: {line[:1]}")
+    if quote and line[:1] != ">":
+      quote = False
+    if ul and line[:2] not in ['* ','- ']:
+      ul = False
+    if ol and line[:len(f"{i + 1}. ")] != f"{i + 1}. ":
+      ol = False
+  
+  if quote: return "quote"
+  if ul: return "ul"
+  if ol: return "ol"
+  return "p"
+
 def markdown_to_blocks(markdown):
   blocks = []
   for block in markdown.split("\n\n"):
@@ -272,6 +307,42 @@ def sample_block_split():
     print(block)
     print()
 
+def sample_block_types():
+  text = "#### This is a heading \n"
+  text += "\n"
+  text += "\n"
+  text += "   This is a paragraph of text. It has some **bold** and *italic* words inside of it.\n"
+  text += "\n"
+  text += "\n"
+  text += "\n"
+  text += "     * This is the first list item in a list block    \n"
+  text += "    - This is a list item   \n"
+  text += "* This is another list item\n"
+  text += "\n"
+  text += "```Fake code actually a paragraph\n"
+  text += "\n"
+  text += "```Actual Code block```\n"
+  text += "\n"
+  text += "# Heading1\n"
+  text += "\n"
+  text += "     1. line 1    \n"
+  text += "    2. line 2   \n"
+  text += "3. line 3\n"
+  text += "\n"
+  text += " > Fake Quote line 1    \n"
+  text += "   Fake Quote line 2   \n"
+  text += "> Fake Quote line 3\n"
+  text += "\n"
+  text += " > Quote line 1    \n"
+  text += "  > Quote line 2   \n"
+  text += "> Quote line 3\n"
+
+  blocks = markdown_to_blocks(text)
+  for i, block in enumerate(blocks):
+    bt = block_to_block_type(block)
+    print(f"Block {i}: ({bt})")
+    print(block)
+
 def main():
   
   sample_text_node()
@@ -284,6 +355,7 @@ def main():
   sample_image_text_node()
   sample_full_text_split()
   sample_block_split()
+  sample_block_types()
 
 
 if __name__ == "__main__":
