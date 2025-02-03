@@ -340,6 +340,44 @@ def sample_block_types():
   blocks = markdown_to_blocks(text)
   for i, block in enumerate(blocks):
     bt = block_to_block_type(block)
+    print()
+    print(f"Block {i}: ({bt})")
+    print(block)
+
+def full_monty():
+  text = "#### This is a heading \n"
+  text += "\n"
+  text += "\n"
+  text += "   This is a paragraph of text. It has some **bold** and *italic* words inside of it.\n"
+  text += "\n"
+  text += "\n"
+  text += "\n"
+  text += "     * This is the first list item in a list block    \n"
+  text += "    - This is a list item   \n"
+  text += "* This is another list item\n"
+  text += "\n"
+  text += "```Fake code actually a paragraph\n"
+  text += "\n"
+  text += "```Actual Code block```\n"
+  text += "\n"
+  text += "# Heading1\n"
+  text += "\n"
+  text += "     1. line 1    \n"
+  text += "    2. line 2   \n"
+  text += "3. line 3\n"
+  text += "\n"
+  text += " > Fake Quote line 1    \n"
+  text += "   Fake Quote line 2   \n"
+  text += "> Fake Quote line 3\n"
+  text += "\n"
+  text += " > Quote line 1    \n"
+  text += "  > Quote line 2   \n"
+  text += "> Quote line 3\n"
+
+  blocks = markdown_to_blocks(text)
+  for i, block in enumerate(blocks):
+    bt = block_to_block_type(block)
+    print()
     print(f"Block {i}: ({bt})")
     print(block)
 
